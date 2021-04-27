@@ -1,5 +1,7 @@
 <template>
-  <Graph :graph="graph" />
+  <div>
+    <Graph :graph="graph" />
+  </div>
 </template>
 
 <script>
