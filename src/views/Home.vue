@@ -1,17 +1,15 @@
 <template>
-  <div>
-    <Graph :graph="graph" />
-  </div>
+  <Nav />
 </template>
 
 <script>
 import axios from "axios";
-import Graph from "../components/Graph";
+import Nav from "../components/NavDrawer";
 
 export default {
   name: "Home",
 
-  components: { Graph },
+  components: { Nav },
 
   data() {
     return {
