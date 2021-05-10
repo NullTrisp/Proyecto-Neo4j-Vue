@@ -61,7 +61,7 @@ export default {
   },
 
   async beforeMount() {
-    this.getInfectedNum();
+    await this.getInfectedNum();
   },
 
   methods: {
@@ -92,18 +92,17 @@ export default {
           console.error(err);
         });
     },
-    getInfectedNum() {
-      axios({
-        method: "get",
-        url: "http://localhost:4000/person/infected",
-        headers: {},
-      })
-        .then((res) => {
-          this.infectNum = res.data.total;
-        })
-        .catch((err) => {
-          console.error(err);
+    async getInfectedNum() {
+      try {
+        const res = await axios({
+          method: "get",
+          url: "http://localhost:4000/person/infected",
+          headers: {},
         });
+        this.infectNum = res.data.total;
+      } catch (err) {
+        console.error(err);
+      }
     },
     async initInfect() {
       try {
@@ -118,8 +117,8 @@ export default {
           },
         });
 
-        setTimeout(() => {
-          this.getInfectedNum();
+        setTimeout(async () => {
+          await this.getInfectedNum();
         }, 800);
       } catch (err) {
         console.error(err);
@@ -167,12 +166,12 @@ export default {
 
     async daily() {
       try {
-        this.relatePeople();
-        this.infectLocation();
-        this.infectPersonInLocation();
-        this.infectRelated();
-        this.deleteRelation();
-        this.getInfectedNum();
+        await this.relatePeople();
+        await this.infectLocation();
+        await this.infectPersonInLocation();
+        await this.infectRelated();
+        await this.deleteRelation();
+        await this.getInfectedNum();
       } catch (err) {
         console.error(err);
       }
