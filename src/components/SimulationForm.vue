@@ -64,12 +64,14 @@ export default {
       max: 1000,
       infectNum: 0,
       infectLocationNum: 0,
+      infectedPeople: [],
     };
   },
 
   async beforeMount() {
     await this.getInfectedNum();
     await this.getInfectedLocationNum();
+    await this.getInfectedPeople();
   },
 
   methods: {
@@ -128,6 +130,7 @@ export default {
         console.error(err);
       }
     },
+
     async initInfect() {
       try {
         await axios({
@@ -188,6 +191,14 @@ export default {
     },
 
     async createData() {
+      const temp = this.infectedPeople.map((el) => el.dni);
+      await this.getInfectedPeople();
+      const aux = this.infectedPeople.map((el) => el.dni);
+      console.log(temp);
+      console.log(aux);
+
+      console.log(aux.filter((el) => !temp.contains(el)));
+
       await axios({
         method: "post",
         url: "http://localhost:4000/analytics",
@@ -204,8 +215,22 @@ export default {
       });
     },
 
+    async getInfectedPeople() {
+      try {
+        const res = await axios({
+          method: "get",
+          url: "http://localhost:4000/person/infected",
+          headers: {},
+        });
+        this.infectedPeople = res.data.records;
+      } catch (err) {
+        console.error(err);
+      }
+    },
+
     async daily() {
       try {
+        await this.getInfectedPeople();
         await this.relatePeople();
         await this.infectLocation();
         await this.infectPersonInLocation();
