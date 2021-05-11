@@ -187,6 +187,23 @@ export default {
       });
     },
 
+    async createData() {
+      await axios({
+        method: "post",
+        url: "http://localhost:4000/analytics",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: {
+          day: this.$store.state.days,
+          infected_locations_num: this.infectLocationNum,
+          infected_locations: [23253, 23453],
+          infected_people_num: this.infectNum,
+          infected_people: [2235, 685],
+        },
+      });
+    },
+
     async daily() {
       try {
         await this.relatePeople();
@@ -194,6 +211,7 @@ export default {
         await this.infectPersonInLocation();
         await this.infectRelated();
         await this.deleteRelation();
+        await this.createData();
         await this.getInfectedNum();
         await this.getInfectedLocationNum();
         this.$store.commit("updateDays");
