@@ -1,23 +1,27 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import Vue from "vue";
+import Vuex from "vuex";
+import createPersistedState from "vuex-persistedstate";
 
-Vue.use(Vuex)
+Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    graph: {
-      nodes: [],
-      edges: [],
-    },
+    days: 0,
+    init: false,
   },
 
   mutations: {
-    updateGraph(state, payload) {
-      state.graph.nodes = payload;
-    }
+    updateDays(state) {
+      state.days += 1;
+    },
+    resetDays(state) {
+      state.days = 0;
+    },
+    changeInit(state, payload) {
+      state.init = payload;
+    },
   },
-  actions: {
-  },
-  modules: {
-  }
-})
+  actions: {},
+  modules: {},
+  plugins: [createPersistedState()],
+});

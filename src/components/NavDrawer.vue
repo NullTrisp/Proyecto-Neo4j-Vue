@@ -34,7 +34,7 @@ export default {
     items: [
       { title: "Home", icon: "mdi-home", route: "/" },
       { title: "Simulation", icon: "mdi-form", route: "/simulation" },
-      { title: "Analitics", icon: "mdi-form", route: "/simulation" },
+      { title: "analytics", icon: "mdi-form", route: "/analytics" },
     ],
   }),
 };

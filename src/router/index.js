@@ -1,26 +1,33 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
+import Vue from "vue";
+import VueRouter from "vue-router";
+import Home from "../views/Home.vue";
+import Simulation from "../views/Simulation.vue";
+import Analytics from "../views/Analytics.vue";
 
-Vue.use(VueRouter)
+Vue.use(VueRouter);
 
 const routes = [
   {
-    path: '/',
-    name: 'Home',
-    component: Home
+    path: "/",
+    name: "Home",
+    component: Home,
   },
   {
-    path: '/simulation',
-    name: 'Simulation',
-    component: () => import(/* webpackChunkName: "about" */ '../views/Simulation.vue')
-  }
-]
+    path: "/simulation",
+    name: "Simulation",
+    component: Simulation,
+  },
+  {
+    path: "/analytics",
+    name: "Analytics",
+    component: Analytics,
+  },
+];
 
 const router = new VueRouter({
-  mode: 'history',
+  mode: "history",
   base: process.env.BASE_URL,
-  routes
-})
+  routes,
+});
 
-export default router
+export default router;

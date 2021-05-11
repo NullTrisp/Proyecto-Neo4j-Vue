@@ -1,7 +1,13 @@
 <template>
   <v-form>
     <v-row>
-      <h1>Total Infected: {{ infectNum }}</h1>
+      <h1>Total people Infected: {{ infectNum }}</h1>
+    </v-row>
+    <v-row>
+      <h1>Total locations Infected: {{ infectLocationNum }}</h1>
+    </v-row>
+    <v-row>
+      <h1>Day: {{ this.$store.state.days }}</h1>
     </v-row>
     <v-row>
       <v-col cols="2">
@@ -14,7 +20,7 @@
     <br />
     <br />
     <br />
-    <v-row>
+    <v-row v-if="!this.$store.state.init">
       <v-col cols="8">
         <v-slider
           v-model="rangeValue"
@@ -57,41 +63,59 @@ export default {
       min: 0,
       max: 1000,
       infectNum: 0,
+      infectLocationNum: 0,
     };
   },
 
   async beforeMount() {
     await this.getInfectedNum();
+    await this.getInfectedLocationNum();
   },
 
   methods: {
-    dump() {
-      axios({
-        method: "post",
-        url: "http://localhost:4000/dump",
-        headers: {},
-      })
-        .then(() => {
-          alert("Data successfuly dumped");
-        })
-        .catch((err) => {
-          console.error(err);
+    async dump() {
+      try {
+        await axios({
+          method: "post",
+          url: "http://localhost:4000/dump",
+          headers: {},
         });
+        alert("Data successfuly dumped");
+      } catch (err) {
+        console.error(err);
+      }
     },
-    deleteDump() {
-      axios({
-        method: "delete",
-        url: "http://localhost:4000/dump",
-        headers: {},
-      })
-        .then(() => {
-          alert("Data successfuly deleted");
-          this.getInfectedNum();
-        })
-        .catch((err) => {
-          console.error(err);
+    async deleteDump() {
+      try {
+        await axios({
+          method: "delete",
+          url: "http://localhost:4000/dump",
+          headers: {},
         });
+        alert("Data successfuly deleted");
+        await this.getInfectedNum();
+        await this.getInfectedLocationNum();
+        this.$store.commit("resetDays");
+        this.$store.commit("changeInit", !this.$store.state.init);
+      } catch (err) {
+        console.error(err);
+      }
     },
+
+    async getInfectedLocationNum() {
+      try {
+        this.infectLocationNum = (
+          await axios({
+            method: "get",
+            url: "http://localhost:4000/location/infected",
+            headers: {},
+          })
+        ).data.total;
+      } catch (err) {
+        console.error(err);
+      }
+    },
+
     async getInfectedNum() {
       try {
         const res = await axios({
@@ -118,6 +142,7 @@ export default {
         });
 
         setTimeout(async () => {
+          this.$store.commit("changeInit", !this.$store.state.init);
           await this.getInfectedNum();
         }, 800);
       } catch (err) {
@@ -172,6 +197,8 @@ export default {
         await this.infectRelated();
         await this.deleteRelation();
         await this.getInfectedNum();
+        await this.getInfectedLocationNum();
+        this.$store.commit("updateDays");
       } catch (err) {
         console.error(err);
       }
