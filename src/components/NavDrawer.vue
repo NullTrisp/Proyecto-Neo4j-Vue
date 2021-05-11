@@ -33,8 +33,8 @@ export default {
   data: () => ({
     items: [
       { title: "Home", icon: "mdi-home", route: "/" },
-      { title: "Simulation", icon: "mdi-form", route: "/simulation" },
-      { title: "analytics", icon: "mdi-form", route: "/analytics" },
+      { title: "Simulation", icon: "mdi-gamepad", route: "/simulation" },
+      { title: "analytics", icon: "mdi-chart-donut", route: "/analytics" },
     ],
   }),
 };

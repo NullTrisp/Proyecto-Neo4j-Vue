@@ -141,10 +141,8 @@ export default {
           },
         });
 
-        setTimeout(async () => {
-          this.$store.commit("changeInit", !this.$store.state.init);
-          await this.getInfectedNum();
-        }, 800);
+        this.$store.commit("changeInit", !this.$store.state.init);
+        await this.getInfectedNum();
       } catch (err) {
         console.error(err);
       }
