@@ -65,6 +65,7 @@ export default {
       infectNum: 0,
       infectLocationNum: 0,
       infectedPeople: [],
+      infectedLocations: [],
     };
   },
 
@@ -191,14 +192,10 @@ export default {
     },
 
     async createData() {
-      const temp = this.infectedPeople.map((el) => el.dni);
+      const tempPeople = this.infectedPeople.map((el) => el.dni);
+      const tempLocations = this.infectedLocations.map((el) => el.zip_code);
       await this.getInfectedPeople();
-      const aux = this.infectedPeople.map((el) => el.dni);
-      console.log(temp);
-      console.log(aux);
-
-      console.log(aux.filter((el) => !temp.contains(el)));
-
+      await this.getInfectedLocations();
       await axios({
         method: "post",
         url: "http://localhost:4000/analytics",
@@ -208,9 +205,13 @@ export default {
         data: {
           day: this.$store.state.days,
           infected_locations_num: this.infectLocationNum,
-          infected_locations: [23253, 23453],
+          infected_locations: this.infectedLocations
+            .map((el) => el.zip_code)
+            .filter((el) => tempLocations.indexOf(el) === -1),
           infected_people_num: this.infectNum,
-          infected_people: [2235, 685],
+          infected_people: this.infectedPeople
+            .map((el) => el.dni)
+            .filter((el) => tempPeople.indexOf(el) === -1),
         },
       });
     },
@@ -228,17 +229,32 @@ export default {
       }
     },
 
+    async getInfectedLocations() {
+      try {
+        this.infectedLocations = (
+          await axios({
+            method: "get",
+            url: "http://localhost:4000/location/infected",
+            headers: {},
+          })
+        ).data.records;
+      } catch (err) {
+        console.error(err);
+      }
+    },
+
     async daily() {
       try {
         await this.getInfectedPeople();
+        await this.getInfectedLocations();
         await this.relatePeople();
         await this.infectLocation();
         await this.infectPersonInLocation();
         await this.infectRelated();
         await this.deleteRelation();
-        await this.createData();
         await this.getInfectedNum();
         await this.getInfectedLocationNum();
+        await this.createData();
         this.$store.commit("updateDays");
       } catch (err) {
         console.error(err);
