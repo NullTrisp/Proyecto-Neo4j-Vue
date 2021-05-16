@@ -3,6 +3,7 @@ import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
 import Simulation from "../views/Simulation.vue";
 import Analytics from "../views/Analytics.vue";
+import Data from "../views/Data.vue";
 
 Vue.use(VueRouter);
 
@@ -21,6 +22,11 @@ const routes = [
     path: "/analytics",
     name: "Analytics",
     component: Analytics,
+  },
+  {
+    path: "/data",
+    name: "Data",
+    component: Data,
   },
 ];
 
