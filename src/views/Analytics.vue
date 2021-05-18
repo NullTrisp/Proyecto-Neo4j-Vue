@@ -1,59 +1,11 @@
 <template>
-  <v-row>
-    <v-col cols="3"><Nav /></v-col>
-    <v-col cols="7">
-      <v-container>
-        <v-row>
-          <v-col>
-            <h2>Total locations: {{ totalLocations }}</h2>
-          </v-col>
-          <v-col>
-            <h2>Total locations infected: {{ totalInfectedLocations }}</h2>
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col>
-            <h2>Total people: {{ totalPeople }}</h2>
-          </v-col>
-          <v-col>
-            <h2>Total people infected: {{ totalInfectedPeople }}</h2>
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col>
-            <h2>People infection ratio: {{ infectPeopleRatio }}%</h2>
-          </v-col>
-          <v-col>
-            <h2>Location infection ratio: {{ infectLocationRatio }}%</h2>
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col>
-            <h2>Day: {{ this.$store.state.days }}</h2>
-          </v-col>
-          <v-col>
-            <h2>
-              Difference:
-              {{
-                data[data.length - 1].infected_locations_num -
-                data[data.length - 2].infected_locations_num
-              }}
-            </h2>
-          </v-col>
-        </v-row>
-      </v-container>
-    </v-col>
-    <v-col cols="2"></v-col>
-  </v-row>
+  <div></div>
 </template>
 
 <script>
-import Nav from "../components/NavDrawer";
 import axios from "axios";
 export default {
   name: "Analytics",
-
-  components: { Nav },
 
   data() {
     return {

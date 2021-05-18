@@ -12,6 +12,7 @@
     "core-js": "^3.6.5",
     "fusioncharts": "^3.17.0",
     "vue": "^2.6.11",
+    "vue-d3-network": "^0.1.28",
     "vue-fusioncharts": "^3.1.0",
     "vue-router": "^3.2.0",
     "vuetify": "^2.4.0",

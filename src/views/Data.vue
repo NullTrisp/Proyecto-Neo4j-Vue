@@ -1,17 +1,12 @@
 <template>
-  <div>
-    <Nav> </Nav>
-    <Data />
-  </div>
+  <Data />
 </template>
 
 <script>
-import Nav from "../components/NavDrawer";
 import Data from "../components/Data";
 
 export default {
   components: {
-    Nav,
     Data,
   },
   data() {

@@ -1,20 +1,21 @@
 <template>
-  <v-navigation-drawer permanent>
+  <v-navigation-drawer absolute permanent right>
     <v-list-item>
       <v-list-item-content>
-        <v-list-item-title class="title">
-          <h3>Covid 19 simulation</h3>
+        <v-list-item-title class="title" style="padding: 2em 1em 2em 1em">
+          Covid 19 Simulation
         </v-list-item-title>
       </v-list-item-content>
     </v-list-item>
+
     <v-divider></v-divider>
 
-    <v-list dense nav>
+    <v-list dense>
       <v-list-item
         v-for="item in items"
         :key="item.title"
-        link
-        :href="item.route"
+        style="cursor: pointer"
+        @click="$router.push(item.route)"
       >
         <v-list-item-icon>
           <v-icon>{{ item.icon }}</v-icon>

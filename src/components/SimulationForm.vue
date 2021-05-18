@@ -1,53 +1,95 @@
 <template>
-  <v-form>
-    <v-row>
-      <h1>Total people Infected: {{ infectNum }}</h1>
-    </v-row>
-    <v-row>
-      <h1>Total locations Infected: {{ infectLocationNum }}</h1>
-    </v-row>
-    <v-row>
-      <h1>Day: {{ this.$store.state.days }}</h1>
-    </v-row>
-    <v-row>
-      <v-col cols="2">
-        <v-btn color="green" @click="dump"> Dump data</v-btn>
-      </v-col>
-      <v-col cols="10">
-        <v-btn color="red" @click="deleteDump"> Delete data</v-btn>
-      </v-col>
-    </v-row>
-    <br />
-    <br />
-    <br />
-    <v-row v-if="!this.$store.state.init">
-      <v-col cols="8">
-        <v-slider
-          v-model="rangeValue"
-          :label="rangeInput.label"
-          :thumb-color="rangeInput.color"
-          :min="min"
-          :max="max"
-          thumb-label="always"
-        >
-          <template v-slot:append>
-            <v-text-field
-              v-model="rangeValue"
-              class="mt-0 pt-0"
-              hide-details
-              single-line
-              type="number"
-              style="width: 60px"
-            ></v-text-field>
-          </template>
-        </v-slider>
-      </v-col>
-      <v-col cols="4">
-        <v-btn color="primary" @click="initInfect">Infect</v-btn>
-      </v-col>
-    </v-row>
-    <v-row> <v-btn color="grey" @click="daily">Daily advance</v-btn> </v-row>
-  </v-form>
+  <div>
+    <v-card width="90em">
+      <v-form>
+        <v-card-text>
+          <h1>Total people Infected: {{ infectNum }}</h1>
+        </v-card-text>
+        <v-card-text>
+          <h1>Total locations Infected: {{ infectLocationNum }}</h1>
+        </v-card-text>
+        <v-card-text>
+          <h1>Day: {{ this.$store.state.days }}</h1>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn color="green" @click="dump"> Dump data</v-btn>
+          <v-btn color="red" @click="deleteDump"> Delete data</v-btn>
+          <v-slider
+            v-if="!this.$store.state.init"
+            style="padding-right: 6em; padding-left: 6em"
+            v-model="rangeValue"
+            :label="rangeInput.label"
+            :thumb-color="rangeInput.color"
+            :min="min"
+            :max="max"
+            thumb-label="always"
+          >
+            <template v-slot:append>
+              <v-text-field
+                v-model="rangeValue"
+                class="mt-0 pt-0"
+                hide-details
+                single-line
+                type="number"
+                style="width: 60px"
+              ></v-text-field>
+            </template>
+          </v-slider>
+          <v-btn
+            v-if="!this.$store.state.init"
+            color="primary"
+            @click="initInfect"
+            >Infect</v-btn
+          >
+          <v-btn color="grey" @click="daily">Daily advance</v-btn>
+        </v-card-actions>
+      </v-form>
+    </v-card>
+
+    <v-card width="90em" style="margin-top: 4em">
+      <v-card-title> Basic data </v-card-title>
+      <v-container>
+        <v-row>
+          <v-col>
+            <h2>Total locations: {{ totalLocations }}</h2>
+          </v-col>
+          <v-col>
+            <h2>Total locations infected: {{ totalInfectedLocations }}</h2>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <h2>Total people: {{ totalPeople }}</h2>
+          </v-col>
+          <v-col>
+            <h2>Total people infected: {{ totalInfectedPeople }}</h2>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <h2>People infection ratio: {{ infectPeopleRatio }}%</h2>
+          </v-col>
+          <v-col>
+            <h2>Location infection ratio: {{ infectLocationRatio }}%</h2>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <h2>Day: {{ this.$store.state.days }}</h2>
+          </v-col>
+          <v-col v-if="data.lentgh === 0">
+            <h2>
+              Difference:
+              {{
+                data[data.length - 1].infected_locations_num -
+                data[data.length - 2].infected_locations_num
+              }}
+            </h2>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-card>
+  </div>
 </template>
 
 <script>
@@ -66,13 +108,36 @@ export default {
       infectLocationNum: 0,
       infectedPeople: [],
       infectedLocations: [],
+
+      totalLocations: 0,
+      totalInfectedLocations: 0,
+      totalPeople: 0,
+      totalInfectedPeople: 0,
+      data: [],
     };
   },
 
   async beforeMount() {
-    await this.getInfectedNum();
-    await this.getInfectedLocationNum();
-    await this.getInfectedPeople();
+    try {
+      await this.getInfectedNum();
+      await this.getInfectedLocationNum();
+      await this.getInfectedPeople();
+
+      await this.refreshData();
+    } catch (err) {
+      console.error(err);
+    }
+  },
+
+  computed: {
+    infectPeopleRatio: function () {
+      return Math.floor((this.totalInfectedPeople / this.totalPeople) * 100);
+    },
+    infectLocationRatio: function () {
+      return Math.floor(
+        (this.totalInfectedLocations / this.totalLocations) * 100
+      );
+    },
   },
 
   methods: {
@@ -84,6 +149,7 @@ export default {
           headers: {},
         });
         alert("Data successfuly dumped");
+        await this.refreshData();
       } catch (err) {
         console.error(err);
       }
@@ -100,6 +166,7 @@ export default {
         await this.getInfectedLocationNum();
         this.$store.commit("resetDays");
         this.$store.commit("changeInit", !this.$store.state.init);
+        await this.refreshData();
       } catch (err) {
         console.error(err);
       }
@@ -147,6 +214,7 @@ export default {
 
         this.$store.commit("changeInit", !this.$store.state.init);
         await this.getInfectedNum();
+        await this.refreshData();
       } catch (err) {
         console.error(err);
       }
@@ -256,9 +324,72 @@ export default {
         await this.getInfectedLocationNum();
         await this.createData();
         this.$store.commit("updateDays");
+        await this.refreshData();
       } catch (err) {
         console.error(err);
       }
+    },
+
+    async refreshData() {
+      await this.getTotalLocations();
+      await this.getTotalInfectedLocations();
+      await this.getTotalPeople();
+      await this.getTotalInfectedPeople();
+      await this.getData();
+    },
+
+    async getData() {
+      this.data = (
+        await axios({
+          method: "get",
+          url: "http://localhost:4000/analytics",
+          headers: {},
+        })
+      ).data.records.map((el) => {
+        return {
+          day: el.day.low,
+          infected_locations: el.infected_locations,
+          infected_locations_num: el.infected_locations_num.low,
+          infected_people: el.infected_people,
+          infected_people_num: el.infected_people_num.low,
+        };
+      });
+    },
+    async getTotalLocations() {
+      this.totalLocations = (
+        await axios({
+          method: "get",
+          url: "http://localhost:4000/location",
+          headers: {},
+        })
+      ).data.total;
+    },
+    async getTotalInfectedLocations() {
+      this.totalInfectedLocations = (
+        await axios({
+          method: "get",
+          url: "http://localhost:4000/location/infected",
+          headers: {},
+        })
+      ).data.total;
+    },
+    async getTotalPeople() {
+      this.totalPeople = (
+        await axios({
+          method: "get",
+          url: "http://localhost:4000/person",
+          headers: {},
+        })
+      ).data.total;
+    },
+    async getTotalInfectedPeople() {
+      this.totalInfectedPeople = (
+        await axios({
+          method: "get",
+          url: "http://localhost:4000/person/infected",
+          headers: {},
+        })
+      ).data.total;
     },
   },
 };
