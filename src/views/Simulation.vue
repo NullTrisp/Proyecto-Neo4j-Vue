@@ -14,7 +14,7 @@ export default {
 
 <style scoped>
 #form {
-  margin-top: 10em;
+  margin-top: 4em;
   margin-left: 6em;
 }
 </style>

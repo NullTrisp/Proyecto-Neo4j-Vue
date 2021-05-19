@@ -1,5 +1,6 @@
 <template>
   <v-container>
+    <h1>People</h1>
     <v-text-field
       v-model="search"
       append-icon="mdi-search"
@@ -13,6 +14,7 @@
       :items="items"
       :items-per-page="10"
       class="elevation-1"
+      @click:row="handleClick"
     ></v-data-table>
   </v-container>
 </template>
@@ -49,6 +51,13 @@ export default {
     } catch (err) {
       console.error(err);
     }
+  },
+
+  methods: {
+    handleClick(row) {
+      this.$store.commit("setPerson", row.dni);
+      this.$router.push("/person");
+    },
   },
 };
 </script>

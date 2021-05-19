@@ -1,8 +1,9 @@
 <template>
-  <div>
+  <v-container style="margin-left: 2em">
+    <v-btn @click="toggle = !toggle"> Change table </v-btn>
     <People v-if="toggle" />
     <Locations v-if="!toggle" />
-  </div>
+  </v-container>
 </template>
 
 <script>

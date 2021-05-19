@@ -3,7 +3,7 @@
     :net-nodes="nodes"
     :net-links="links"
     :options="options"
-    style="padding-top:10em"
+    style="padding-top: 4em; padding-right: -2em"
   />
 </template>
 

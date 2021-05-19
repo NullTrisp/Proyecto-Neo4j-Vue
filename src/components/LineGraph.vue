@@ -13,12 +13,11 @@ export default {
   props: {
     caption: String,
     yaxisname: String,
-    data: Array,
   },
   data: () => ({
     type: "spline",
     width: "70%",
-    height: "100%",
+    height: "80%",
     dataFormat: "json",
     dataSource: {
       chart: {
@@ -40,7 +39,11 @@ export default {
   mounted() {
     this.dataSource.chart.caption = this.caption;
     this.dataSource.chart.yaxisname = this.yaxisname;
-    this.dataSource.data = this.data;
+    this.dataSource.data = this.$store.state.graphData;
+  },
+
+  updated() {
+    this.dataSource.data = this.$store.state.graphData;
   },
 };
 </script>

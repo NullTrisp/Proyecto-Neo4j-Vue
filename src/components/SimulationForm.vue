@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <v-card width="90em">
+  <v-container>
+    <v-card width="68em">
       <v-form>
         <v-card-text>
           <h1>Total people Infected: {{ infectNum }}</h1>
@@ -46,7 +46,7 @@
       </v-form>
     </v-card>
 
-    <v-card width="90em" style="margin-top: 4em">
+    <v-card width="68em" style="margin-top: 4em">
       <v-card-title> Basic data </v-card-title>
       <v-container>
         <v-row>
@@ -89,7 +89,7 @@
         </v-row>
       </v-container>
     </v-card>
-  </div>
+  </v-container>
 </template>
 
 <script>
@@ -325,9 +325,30 @@ export default {
         await this.createData();
         this.$store.commit("updateDays");
         await this.refreshData();
+        await this.updateGraphData();
       } catch (err) {
         console.error(err);
       }
+    },
+
+    async updateGraphData() {
+      const res = (
+        await axios({
+          method: "get",
+          url: "http://localhost:4000/analytics",
+          headers: {},
+        })
+      ).data.records;
+
+      this.$store.commit(
+        "changeGraphData",
+        res.map((el) => {
+          return {
+            label: "day " + (el.day.low + 1),
+            value: el.infected_people_num.low,
+          };
+        })
+      );
     },
 
     async refreshData() {

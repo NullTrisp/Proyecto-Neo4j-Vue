@@ -36,7 +36,7 @@ export default {
       { title: "Home", icon: "mdi-home", route: "/" },
       { title: "Simulation", icon: "mdi-gamepad", route: "/simulation" },
       { title: "analytics", icon: "mdi-chart-donut", route: "/analytics" },
-      { title: "data", icon: "mdi-list", route: "/data" },
+      { title: "data", icon: "mdi-note-text-outline", route: "/data" },
     ],
   }),
 };

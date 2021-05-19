@@ -8,6 +8,8 @@ export default new Vuex.Store({
   state: {
     days: 0,
     init: false,
+    graphData: [],
+    person: 0,
   },
 
   mutations: {
@@ -19,6 +21,12 @@ export default new Vuex.Store({
     },
     changeInit(state, payload) {
       state.init = payload;
+    },
+    changeGraphData(state, payload) {
+      state.graphData = payload;
+    },
+    setPerson(state, payload) {
+      state.person = payload;
     },
   },
   actions: {},
