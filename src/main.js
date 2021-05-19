@@ -6,10 +6,12 @@ import vuetify from "./plugins/vuetify";
 
 import VueFusionCharts from "vue-fusioncharts";
 import FusionCharts from "fusioncharts";
+import Charts from "fusioncharts/fusioncharts.charts";
+import FusionTheme from "fusioncharts/themes/fusioncharts.theme.fusion";
 
 Vue.config.productionTip = false;
 
-Vue.use(VueFusionCharts, FusionCharts);
+Vue.use(VueFusionCharts, FusionCharts, Charts, FusionTheme);
 
 new Vue({
   router,

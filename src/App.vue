@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-main> 
+    <v-main>
       <Nav />
       <router-view />
     </v-main>
@@ -16,3 +16,9 @@ export default {
   },
 };
 </script>
+
+<style>
+svg {
+  overflow: inherit;
+}
+</style>
