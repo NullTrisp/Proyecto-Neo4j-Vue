@@ -54,7 +54,7 @@
             <h2>Total locations: {{ totalLocations }}</h2>
           </v-col>
           <v-col>
-            <h2>Total locations infected: {{ totalInfectedLocations }}</h2>
+            <h2>Total locations infected: {{ infectLocationNum }}</h2>
           </v-col>
         </v-row>
         <v-row>
@@ -62,7 +62,7 @@
             <h2>Total people: {{ totalPeople }}</h2>
           </v-col>
           <v-col>
-            <h2>Total people infected: {{ totalInfectedPeople }}</h2>
+            <h2>Total people infected: {{ infectNum }}</h2>
           </v-col>
         </v-row>
         <v-row>
@@ -110,7 +110,6 @@ export default {
       infectedLocations: [],
 
       totalLocations: 0,
-      totalInfectedLocations: 0,
       totalPeople: 0,
       totalInfectedPeople: 0,
       data: [],
@@ -122,7 +121,6 @@ export default {
       await this.getInfectedNum();
       await this.getInfectedLocationNum();
       await this.getInfectedPeople();
-
       await this.refreshData();
     } catch (err) {
       console.error(err);
@@ -131,12 +129,10 @@ export default {
 
   computed: {
     infectPeopleRatio: function () {
-      return Math.floor((this.totalInfectedPeople / this.totalPeople) * 100);
+      return Math.floor((this.infectNum / this.totalPeople) * 100);
     },
     infectLocationRatio: function () {
-      return Math.floor(
-        (this.totalInfectedLocations / this.totalLocations) * 100
-      );
+      return Math.floor((this.infectLocationNum / this.totalLocations) * 100);
     },
   },
 
@@ -353,28 +349,20 @@ export default {
 
     async refreshData() {
       await this.getTotalLocations();
-      await this.getTotalInfectedLocations();
       await this.getTotalPeople();
-      await this.getTotalInfectedPeople();
       await this.getData();
     },
 
     async getData() {
-      this.data = (
+      const records = (
         await axios({
           method: "get",
           url: "http://localhost:4000/analytics",
           headers: {},
         })
-      ).data.records.map((el) => {
-        return {
-          day: el.day.low,
-          infected_locations: el.infected_locations,
-          infected_locations_num: el.infected_locations_num.low,
-          infected_people: el.infected_people,
-          infected_people_num: el.infected_people_num.low,
-        };
-      });
+      ).data.records;
+
+      this.data.push(records[records.length - 2], records[records.length - 1]);
     },
     async getTotalLocations() {
       this.totalLocations = (
@@ -385,29 +373,11 @@ export default {
         })
       ).data.total;
     },
-    async getTotalInfectedLocations() {
-      this.totalInfectedLocations = (
-        await axios({
-          method: "get",
-          url: "http://localhost:4000/location/infected",
-          headers: {},
-        })
-      ).data.total;
-    },
     async getTotalPeople() {
       this.totalPeople = (
         await axios({
           method: "get",
           url: "http://localhost:4000/person",
-          headers: {},
-        })
-      ).data.total;
-    },
-    async getTotalInfectedPeople() {
-      this.totalInfectedPeople = (
-        await axios({
-          method: "get",
-          url: "http://localhost:4000/person/infected",
           headers: {},
         })
       ).data.total;
