@@ -13,6 +13,7 @@
         </v-card-text>
         <v-card-actions>
           <v-btn color="green" @click="dump"> Dump data</v-btn>
+          <v-btn color="green" @click="dumpLite"> Dump lite data</v-btn>
           <v-btn color="red" @click="deleteDump"> Delete data</v-btn>
           <v-slider
             v-if="!this.$store.state.init"
@@ -82,7 +83,7 @@
               Difference:
               {{
                 data[data.length - 1].infected_locations_num -
-                data[data.length - 2].infected_locations_num
+                  data[data.length - 2].infected_locations_num
               }}
             </h2>
           </v-col>
@@ -128,21 +129,40 @@ export default {
   },
 
   computed: {
-    infectPeopleRatio: function () {
+    infectPeopleRatio: function() {
       return Math.floor((this.infectNum / this.totalPeople) * 100);
     },
-    infectLocationRatio: function () {
+    infectLocationRatio: function() {
       return Math.floor((this.infectLocationNum / this.totalLocations) * 100);
     },
   },
 
   methods: {
+    async dumpLite() {
+      try {
+        await axios({
+          method: "post",
+          url: "http://localhost:4000/dump",
+          headers: {},
+          data: {
+            lite: true,
+          },
+        });
+        alert("Data successfuly dumped");
+        await this.refreshData();
+      } catch (err) {
+        console.error(err);
+      }
+    },
     async dump() {
       try {
         await axios({
           method: "post",
           url: "http://localhost:4000/dump",
           headers: {},
+          data: {
+            lite: false,
+          },
         });
         alert("Data successfuly dumped");
         await this.refreshData();

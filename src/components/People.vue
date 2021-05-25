@@ -55,12 +55,11 @@ export default {
 
   methods: {
     handleClick(row) {
-      this.$store.commit("setPerson", row.dni);
+      this.$store.commit("setPerson", row);
       this.$router.push("/person");
     },
   },
 };
 </script>
 
-<style>
-</style>
+<style></style>

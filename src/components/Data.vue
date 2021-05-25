@@ -1,5 +1,5 @@
 <template>
-  <v-container style="margin-left: 2em">
+  <v-container style="width: 100em; padding-right: 20em">
     <v-btn @click="toggle = !toggle"> Change table </v-btn>
     <People v-if="toggle" />
     <Locations v-if="!toggle" />

@@ -25,6 +25,7 @@ export default {
         force: 100,
         nodeSize: 10,
         linkWidth: 1,
+        canvas: false,
       },
     };
   },
