@@ -15,6 +15,12 @@
           <v-btn color="green" @click="dump"> Dump data</v-btn>
           <v-btn color="green" @click="dumpLite"> Dump lite data</v-btn>
           <v-btn color="red" @click="deleteDump"> Delete data</v-btn>
+
+          <v-btn color="grey" @click="daily">Daily advance</v-btn>
+        </v-card-actions>
+        <br />
+        <br />
+        <v-card-actions>
           <v-slider
             v-if="!this.$store.state.init"
             style="padding-right: 6em; padding-left: 6em"
@@ -42,7 +48,6 @@
             @click="initInfect"
             >Infect</v-btn
           >
-          <v-btn color="grey" @click="daily">Daily advance</v-btn>
         </v-card-actions>
       </v-form>
     </v-card>
@@ -78,14 +83,8 @@
           <v-col>
             <h2>Day: {{ this.$store.state.days }}</h2>
           </v-col>
-          <v-col v-if="data.lentgh === 0">
-            <h2>
-              Difference:
-              {{
-                data[data.length - 1].infected_locations_num -
-                  data[data.length - 2].infected_locations_num
-              }}
-            </h2>
+          <v-col>
+            <h2>Expected new infected: {{ nextInfected }}</h2>
           </v-col>
         </v-row>
       </v-container>
@@ -114,6 +113,8 @@ export default {
       totalPeople: 0,
       totalInfectedPeople: 0,
       data: [],
+
+      nextInfected: 0,
     };
   },
 
@@ -123,21 +124,31 @@ export default {
       await this.getInfectedLocationNum();
       await this.getInfectedPeople();
       await this.refreshData();
+      await this.getNextInfected();
     } catch (err) {
       console.error(err);
     }
   },
 
   computed: {
-    infectPeopleRatio: function() {
+    infectPeopleRatio: function () {
       return Math.floor((this.infectNum / this.totalPeople) * 100);
     },
-    infectLocationRatio: function() {
+    infectLocationRatio: function () {
       return Math.floor((this.infectLocationNum / this.totalLocations) * 100);
     },
   },
 
   methods: {
+    async getNextInfected() {
+      this.nextInfected = (
+        await axios({
+          method: "get",
+          url: "http://localhost:4000/person/nextinfected",
+          headers: {},
+        })
+      ).data.total;
+    },
     async dumpLite() {
       try {
         await axios({
@@ -183,6 +194,7 @@ export default {
         this.$store.commit("resetDays");
         this.$store.commit("changeInit", !this.$store.state.init);
         await this.refreshData();
+        this.nextInfected = 0;
       } catch (err) {
         console.error(err);
       }
@@ -231,6 +243,7 @@ export default {
         this.$store.commit("changeInit", !this.$store.state.init);
         await this.getInfectedNum();
         await this.refreshData();
+        await this.getNextInfected();
       } catch (err) {
         console.error(err);
       }
@@ -341,6 +354,7 @@ export default {
         await this.createData();
         this.$store.commit("updateDays");
         await this.refreshData();
+        await this.getNextInfected();
         await this.updateGraphData();
       } catch (err) {
         console.error(err);

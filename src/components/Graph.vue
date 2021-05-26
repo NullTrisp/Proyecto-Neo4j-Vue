@@ -4,6 +4,7 @@
     :net-links="links"
     :options="options"
     style="padding-top: 4em; padding-right: -2em"
+    v-on:node-click="setPerson"
   />
 </template>
 
@@ -59,6 +60,16 @@ export default {
     } catch (err) {
       console.error(err);
     }
+  },
+  methods: {
+    setPerson(_payload, node) {
+      this.$store.commit("setPerson", {
+        dni: node.id,
+        name: node.name.split(" ")[0],
+        last_name: node.name.split(" ")[1],
+      });
+      this.$router.push("/person");
+    },
   },
 };
 </script>

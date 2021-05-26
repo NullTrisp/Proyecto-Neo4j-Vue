@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-container style="padding-left: 30em; padding-top: 10em;" v-if="!find">
+    <v-container style="padding-left: 20em; padding-top: 10em" v-if="!find">
       <v-card width="30em">
         <v-card-title>Dni: {{ this.$store.state.person.dni }}</v-card-title>
         <v-card-text> Name: {{ this.$store.state.person.name }} </v-card-text>
@@ -9,7 +9,12 @@
         </v-card-actions>
       </v-card>
 
-      <D3Network :net-nodes="nodes" :net-links="links" :options="options" />
+      <D3Network
+        :net-nodes="nodes"
+        :net-links="links"
+        :options="options"
+        v-on:node-click="setPerson"
+      />
     </v-container>
 
     <v-container v-if="find" style="width: 100em; padding-right: 20em">
@@ -84,6 +89,14 @@ export default {
   },
 
   methods: {
+    async setPerson(_payload, node) {
+      this.$store.commit("setPerson", {
+        dni: node.id,
+        name: node.name.split(" ")[0],
+        last_name: node.name.split(" ")[1],
+      });
+      await this.loadNodes();
+    },
     async loadNodes() {
       this.nodes = (
         await axios({
@@ -93,8 +106,8 @@ export default {
         })
       ).data.records.map((el) => {
         return el.infected
-          ? { id: el.dni, name: el.dni, _color: "red" }
-          : { id: el.dni, name: el.dni, _color: "green" };
+          ? { id: el.dni, name: el.name + " " + el.last_name, _color: "red" }
+          : { id: el.dni, name: el.name + " " + el.last_name, _color: "green" };
       });
       this.items = await (
         await axios({
@@ -143,6 +156,7 @@ export default {
           };
         });
       } catch (err) {
+        alert("There is no path to this person");
         console.error(err);
       }
     },
